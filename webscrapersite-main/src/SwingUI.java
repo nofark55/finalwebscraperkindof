@@ -34,25 +34,24 @@ public class SwingUI {
     public static void main(String[] args) {
         SwingUI SwingUI = new SwingUI();
         SwingUI.showEventDemo();
-        // swingControlDemo.Finder(); // Commented out since no input parameter available here
 
     }
 
     public void Finder(String input) {
 
         try {
-            // Clear previous
+            // Clear previous things, not really needed
             links = "";
             leftTextArea.setText("");
             rightTextArea.setText("");
             
-            System.out.println();
+            //prints hello to let me know it started
             System.out.print("hello \n");
             URI uri = new URI(input);
             URL url = uri.toURL();
 
 
-
+            //opens connection to the site
             URLConnection urlc = url.openConnection();
             urlc.setRequestProperty("User-Agent", "Mozilla 5.0 (Windows; U; " + "Windows NT 5.1; en-US; rv:1.8.0.11) ");
 
@@ -66,7 +65,6 @@ public class SwingUI {
                         //hDQ is double quote, and single quote is hsq
                         int hDQ = line.indexOf("href=\"");
                         int hSQ = line.indexOf("href='");
-
                         int start;
                         char cQ;
 
@@ -88,7 +86,7 @@ public class SwingUI {
                             String urlC = line.substring(start);
                             //starts the substring 
                             int end = urlC.indexOf(cQ);
-                            //this didnt work in my last iteration of the file. works now but idk why it didnt. this does the oppisite but it should still have worked.
+                            //sbustrings and checks if it didn't return -1, or something wrong, and it check if it didn't start with //
                             if (end != -1 || !urlC.substring(0, 2).equals("//")) {
                                 String foundLink = urlC.substring(0, end);
                                 links += foundLink + "\n";
@@ -99,10 +97,11 @@ public class SwingUI {
                                     rightTextArea.setText(currentKeywords);
                                 }
                             }
+                            //check for //, so that it can substring it out.
                             else if (end != -1 || urlC.substring(0, 2).equals("//")) {
                                 String foundLink = urlC.substring(2, end);
                                 links += foundLink + "\n";
-                                leftTextArea.setText(links); // updat
+                                leftTextArea.setText(links); // update
                                 if (foundLink.contains(searchTerm)) {
                                     String currentKeywords = rightTextArea.getText();
                                     currentKeywords += foundLink + "\n";
@@ -125,7 +124,7 @@ public class SwingUI {
     }
 
     private void prepareGUI() {
-        mainFrame = new JFrame("Java SWING Examples");
+        mainFrame = new JFrame("Webscraper");
         mainFrame.setSize(WIDTH, HEIGHT);
         mainFrame.setLayout(new GridLayout(4, 1));
 
@@ -145,7 +144,7 @@ public class SwingUI {
         
         mainFrame.add(searchTermArea);
         mainFrame.add(linkArea);
-
+        //exiting logic
         mainFrame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent) {
                 System.exit(0);
@@ -177,10 +176,10 @@ public class SwingUI {
         rightScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         rightScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     
-        
+        //add text areas to panel
         textAreaPanel.add(leftScrollPane);
         textAreaPanel.add(rightScrollPane);
-
+        //add to main frame
         mainFrame.add(controlPanel);
         mainFrame.add(textAreaPanel);
 
@@ -193,17 +192,23 @@ public class SwingUI {
         JButton copyButton = new JButton("Copy");
         JButton stopButton = new JButton("Stop");
 
+        JButton cutepuppyButton = new JButton("Watch cute puppies");
+
         startButton.setActionCommand("Start");
         copyButton.setActionCommand("Copy");
         stopButton.setActionCommand("Stop");
 
+        cutepuppyButton.setActionCommand("Watch cute puppies");
+
         startButton.addActionListener(new ButtonClickListener());
         copyButton.addActionListener(new ButtonClickListener());
         stopButton.addActionListener(new ButtonClickListener());
+        cutepuppyButton.addActionListener(new ButtonClickListener());
 
         controlPanel.add(startButton);
         controlPanel.add(copyButton);
         controlPanel.add(stopButton);
+        controlPanel.add(cutepuppyButton);
 
         mainFrame.setVisible(true);
     }
@@ -225,9 +230,16 @@ public class SwingUI {
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(stringSelection, null);
                 System.out.println("Copied to clipboard");
-            } else {
+            } else if (command.equals("Watch cute puppies")) {
+                try {
+                    Desktop.getDesktop().browse(URI.create("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }
+                
+            } else if (command.equals("Stop")) {
                 System.exit(0);
-            }
+            } 
         }
     }
-}
+} 
